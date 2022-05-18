@@ -1,4 +1,5 @@
 package chess.pieces;
+import chess.Conversion;
 
 /**
  * Abstract class <code>Piece</code> that has <code>row</code>, <code>col</code>, <code>team</code>,
@@ -63,7 +64,7 @@ public abstract class Piece {
      * 
      * @param board
      */
-    public void setBoard(Piece[][] board) {
+    public void setBoard(Piece[][] board){
         this.board = board;
     }
     
@@ -72,7 +73,7 @@ public abstract class Piece {
      * 
      * @param row
      */
-    public void setRow(int row) {
+    public void setRow(int row){
         this.row = row;
     }
 
@@ -81,7 +82,7 @@ public abstract class Piece {
      * 
      * @param col
      */
-    public void setCol(int col) {
+    public void setCol(int col){
         this.col = col;
     }
 
@@ -90,7 +91,7 @@ public abstract class Piece {
      * 
      * @param team
      */
-    public void setTeam(char team) {
+    public void setTeam(char team){
         this.team = team;
     }
 
@@ -99,42 +100,42 @@ public abstract class Piece {
      * 
      * @param type
      */
-    public void setType(char type) {
+    public void setType(char type){
         this.type = type;
     }
 
     /**
      * @return The chess board
      */
-    public Piece[][] getBoard() {
+    public Piece[][] getBoard(){
         return board;
     }    
 
     /**
      * @return The row the piece is in
      */
-    public int getRow() {
+    public int getRow(){
         return row;
     }
 
     /**
      * @return The column the piece is in.
      */
-    public int getCol() {
+    public int getCol(){
         return col;
     }
 
     /**
      * @return The team the piece is on.
      */
-    public char getTeam() {
+    public char getTeam(){
         return team;
     }
 
     /**
      * @return The type of the piece.
      */
-    public char getType() {
+    public char getType(){
         return type;
     }
 
@@ -165,4 +166,26 @@ public abstract class Piece {
      * @return <code>true</code> if it is a legal move, <code>false</code> otherwise
      */
     public abstract boolean legalMove(int newRow, int newCol);
+
+
+    public String toString(){
+        String team_as_str, type_as_str;
+        int r;
+        char c;
+
+        if (team == 'b') team_as_str = "Black";
+        else team_as_str = "White";
+
+        type_as_str = Conversion.retrieve_type(this.getType());
+
+        r = getRow();
+        r = 8 - r;
+        c = Conversion.retrieve_col(this.getCol());
+
+        return "Piece Info\n" +
+               "----------\n" +
+               "Team:\t\t" + team_as_str + "\n" +
+               "Type:\t\t" + type_as_str + "\n" +
+               "Position:\t" + c + r + "\n";
+    }
 }
