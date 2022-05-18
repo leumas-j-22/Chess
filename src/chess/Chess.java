@@ -42,9 +42,15 @@ public class Chess {
      * 
      * @param board An 8x8 board to be filled with pieces
      */
-    public static void setBoard(Piece[][] board) {
+    public static void setBoard(Piece[][] board){
 
         // Pawns
+        for (int col = 0; col < 8; col++){
+            Piece bPawn = new Pawn(board, 1, col, 'b', 'p');
+            Piece wPawn = new Pawn(board, 6, col, 'w', 'p');
+            bPawn.addPiece();
+            wPawn.addPiece();
+        }
 
         
         // Knights
@@ -119,7 +125,7 @@ public class Chess {
      * 
      * @param board Board to be printed
      */
-    public static void printBoard(Piece[][] board) {
+    public static void printBoard(Piece[][] board){
 
         System.out.println();
 
