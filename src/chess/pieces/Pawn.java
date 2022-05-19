@@ -24,6 +24,7 @@ public class Pawn extends Piece {
         super(board, row, col, team, type);
     }
 
+
     /**
      * Checks if the entered space represents a legal move for a Pawn. <code>Chess</code> already checks 
      * if the entered move is out of bounds or if it isn't a move at all (row and column values don't change),
@@ -40,5 +41,38 @@ public class Pawn extends Piece {
 
         // TODO
         return true;
+    }
+
+
+    /**
+     * Promotes a Pawn if it has reached the other end of the board.
+     * 
+     * @param pawn_to_promote The Pawn to promote
+     * @param upgrade A character representing the piece to upgrade to. 'Q' for Queen, 'R' for Rook, 'B'
+     *                for Bishop, and 'N' for Knight
+     * @return The piece the Pawn is promoted to
+     */
+    public static Piece promotion(Piece pawn_to_promote, char upgrade){
+
+        Piece[][] board = pawn_to_promote.getBoard();
+        char team = pawn_to_promote.getTeam();
+        int row = pawn_to_promote.getRow();
+        int col = pawn_to_promote.getCol();
+        Piece replacement = null;
+
+        if (upgrade == 'Q'){
+            replacement = new Queen(board, row, col, team, 'Q');
+        }
+        else if (upgrade == 'R'){
+            replacement = new Rook(board, row, col, team, 'R');
+        }
+        else if (upgrade == 'B'){
+            replacement = new Bishop(board, row, col, team, 'B');
+        }
+        else if (upgrade == 'N'){
+            replacement = new Knight(board, row, col, team, 'N');
+        }
+
+        return replacement;
     }
 }
