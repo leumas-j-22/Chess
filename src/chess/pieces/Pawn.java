@@ -37,10 +37,78 @@ public class Pawn extends Piece {
      * @param finalCol The column you want to move the piece to
      * @return <code>true</code> if it is a legal move, <code>false</code> otherwise
      */
-    public boolean legalMove(int newRow, int newCol){
+    public boolean legalMove(int finalRow, int finalCol){
 
-        // TODO
-        return true;
+        int startingRow = getRow();
+        int startingCol = getCol();
+        Piece[][] board = getBoard();
+        char piece_moving_team = getTeam();
+
+        int rowChange = Math.abs(finalRow - startingRow);
+        int colChange = Math.abs(finalCol - startingCol);
+
+        // A black pawn
+        if (piece_moving_team == 'b'){
+
+            // A black pawn can only move down the board
+            if (finalRow > startingRow){
+
+                if (colChange == 0){
+
+                    // Moving down one space
+                    if (rowChange == 1 && board[finalRow][finalCol] == null){
+                        return true;
+                    }
+                    // Pawn in starting row and moving down two spaces
+                    if (startingRow == 1){
+                        if (rowChange == 2 && board[2][finalCol] == null && board[3][finalCol] == null){
+                            return true;
+                        }
+                    }
+                }
+                // Capturing an enemy piece
+                else if (colChange == 1){
+
+                    if (rowChange == 1){
+                        if (board[finalRow][finalCol] != null && piece_moving_team != board[finalRow][finalCol].getTeam()){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        // A white pawn
+        else {
+
+            // A white pawn can only move up the board
+            if (finalRow < startingRow){
+
+                if (colChange == 0){
+
+                    // Moving up one space
+                    if (rowChange == 1 && board[finalRow][finalCol] == null){
+                        return true;
+                    }
+                    // Pawn in starting row and moving up two spaces
+                    if (startingRow == 6){
+                        if (rowChange == 2 && board[5][finalCol] == null && board[4][finalCol] == null){
+                            return true;
+                        }
+                    }
+                }
+                // Capturing an enemy piece
+                else if (colChange == 1){
+
+                    if (rowChange == 1){
+                        if (board[finalRow][finalCol] != null && piece_moving_team != board[finalRow][finalCol].getTeam()){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
 
