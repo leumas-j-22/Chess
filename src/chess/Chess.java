@@ -14,9 +14,9 @@ import java.io.IOException;
 public class Chess {
 
     static Scanner scanner = new Scanner(System.in);
-    private static Piece[][] board = new Piece[8][8];
-    private static int moveNumber = 0;
-    private static boolean play = true;
+    static Piece[][] board = new Piece[8][8];
+    static int moveNumber = 0;
+    static boolean play = true;
 
     /**
      * Checks if the row and column values for a starting square and ending square are out of bounds.
@@ -78,28 +78,6 @@ public class Chess {
     }
 
 
-    private static void resign(BufferedWriter bw){
-        try{
-            bw.write("resign");
-            bw.newLine();
-
-            if (moveNumber % 2 == 0){
-                System.out.println("Black wins");
-                bw.write("Black wins");
-            }
-            else {
-                System.out.println("White wins");
-                bw.write("White wins");
-            }
-
-            play = false;
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-    }
-
-
     /**
      * Runs a game of chess. White starts with the first move.
      * 
@@ -120,6 +98,7 @@ public class Chess {
 
             BufferedWriter bw = new BufferedWriter(fw);
             String move;
+            boolean validMove = false;
 
             Setup.setBoard(board);
             printBoard();
@@ -129,14 +108,13 @@ public class Chess {
                 move = scanner.nextLine();
                 move = move.trim();
     
-                if (move.equals("resign")){
-                    resign(bw);
-                }
+                validMove = InputParser.check_special_input(move, bw);
 
-
-                moveNumber++;
+                if (validMove) moveNumber++;
             }
 
+            bw.newLine();
+            bw.write("Number of moves: " + moveNumber);
             bw.close();
             fw.close();
         }
