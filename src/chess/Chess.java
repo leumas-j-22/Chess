@@ -1,5 +1,9 @@
 package chess;
 import chess.pieces.*;
+import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.IOException;
 
 /**
  * This class implements a game of Chess.
@@ -8,6 +12,9 @@ import chess.pieces.*;
  * @author Jacob Figueredo
  */
 public class Chess {
+
+    private static Scanner scanner = new Scanner(System.in);
+    private static Piece[][] board = new Piece[8][8];
 
     /**
      * Checks if the row and column values for a starting square and ending square are out of bounds.
@@ -38,11 +45,9 @@ public class Chess {
 
 
     /**
-     * Sets the board at the beginning of the game. 
-     * 
-     * @param board An 8x8 board to be filled with pieces
+     * Sets the board at the beginning of the game.
      */
-    public static void setBoard(Piece[][] board){
+    private static void setBoard(){
 
         // Pawns
         for (int col = 0; col < 8; col++){
@@ -107,47 +112,90 @@ public class Chess {
 
 
     /**
-     * Runs a game of chess.
+     * Prints the current state of the Chess board. This is done in accordance with the project description.
+     */
+    public static void printBoard(){
+
+        System.out.println();
+
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++){
+
+                if (board[row][col] == null){
+                    if (row % 2 == 0 && col % 2 == 1){
+                        System.out.print("## ");
+                    }
+                    else if (row % 2 == 1 && col % 2 == 0){
+                        System.out.print("## ");
+                    }
+                    else {
+                        System.out.print("   ");
+                    }
+                }
+                else {
+                    System.out.print("" + board[row][col].getTeam() + board[row][col].getType() + " ");
+                }
+            }
+            System.out.println(8-row);
+        }
+
+        System.out.println(" a  b  c  d  e  f  g  h\n");
+    }
+
+
+    private static boolean init(){
+
+        String continuation;
+        System.out.print("Continue with the saved game or start a new game? Enter 'y' to continue, 'n' to restart: ");
+
+        while (true){
+            continuation = scanner.nextLine();
+            continuation = continuation.trim();
+
+            if (continuation.equals("y")) return true;
+            else if (continuation.equals("n")) return false;
+            else System.out.print("Invalid input. Please enter 'y' to continue where you left off, or 'n' to start a new game: ");
+        }
+    }
+
+
+    /**
+     * Runs a game of chess. White starts with the first move.
      * 
      * @param args Command-line input to the program
      */
     public static void main(String[] args){
 
-        Piece[][] board = new Piece[8][8];
-        setBoard(board);
-        printBoard(board);
+        // TODO - add in case if there is no existing game that was paused
+        boolean continuation = init();
         
-    }
+        try {
+            FileWriter fw = new FileWriter("data/move-list.txt", true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            int moveNumber = 0;
+            boolean play = true;
+            String move;
 
-
-    /**
-     * Prints the current state of the Chess board.
-     * 
-     * @param board Board to be printed
-     */
-    public static void printBoard(Piece[][] board){
-
-        System.out.println();
-
-        for (int i = 0; i < board.length; i++) {
-            for (int u = 0; u < board[i].length; u++) {
-                if (board[i][u] == null) {
-                    if (i % 2 == 0 && u % 2 == 1) {
-                        System.out.print("## ");
-                    } else if (i % 2 == 1 && u % 2 == 0) {
-                        System.out.print("## ");
-                    } else {
-                        System.out.print("   ");
-                    }
-                } else {
-                    System.out.print("" + board[i][u].getTeam() + board[i][u].getType() + " ");
+            setBoard();
+            printBoard();
+    
+            while (play){
+    
+                move = scanner.nextLine();
+                move = move.trim();
+    
+                if (move.equals("resign")){
+    
                 }
+    
             }
-            System.out.print(8-i + "  ");
-            System.out.println();
-        }
 
-        System.out.println(" a  b  c  d  e  f  g  h");
-        System.out.println();
+            bw.close();
+            fw.close();
+        }
+        catch (IOException e){
+            System.out.println("An error occurred\n");
+            e.printStackTrace();
+        }       
     }
 }
