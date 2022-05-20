@@ -47,8 +47,6 @@ public class Queen extends Piece {
         int startingCol = getCol();
         Piece[][] board = getBoard();
         char piece_moving_team = getTeam();
-        char type = getType();
-        boolean result;
 
         int rowChange = finalRow - startingRow;
         int colChange = finalCol - startingCol;
@@ -56,16 +54,14 @@ public class Queen extends Piece {
         // This represents the Queen moving as a Rook
         if (rowChange == 0 || colChange == 0){
 
-            Rook queen_as_rook = new Rook(board, startingRow, startingCol, piece_moving_team, type);
-            result = queen_as_rook.legalMove(finalRow, finalCol);
+            Rook queen_as_rook = new Rook(board, startingRow, startingCol, piece_moving_team, 'R');
+            return queen_as_rook.legalMove(finalRow, finalCol);
         }
         // This represents the Queen moving as a Bishop
         else {
 
-            Bishop queen_as_bishop = new Bishop(board, startingRow, startingCol, piece_moving_team, type);
-            result = queen_as_bishop.legalMove(finalRow, finalCol);
+            Bishop queen_as_bishop = new Bishop(board, startingRow, startingCol, piece_moving_team, 'B');
+            return queen_as_bishop.legalMove(finalRow, finalCol);
         }
-
-        return result;
     }
 }
