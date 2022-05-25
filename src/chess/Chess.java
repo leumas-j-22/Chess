@@ -19,34 +19,6 @@ public class Chess {
     static boolean play = true;
 
     /**
-     * Checks if the row and column values for a starting square and ending square are out of bounds.
-     * 
-     * @param startingRow The row the piece is currently in
-     * @param startingCol The column the piece is currently in
-     * @param finalRow The row the piece is trying to move to
-     * @param finalCol The column the piece is trying to move to
-     * @return <code>true</code> if any of the values are out of bounds, <code>false</code> otherwise.
-     */
-    public static boolean out_of_bounds(int startingRow, int startingCol, int finalRow, int finalCol){
-
-        if (startingRow < 0 || startingRow > 7){
-            return true;
-        }
-        if (startingCol < 0 || startingCol > 7){
-            return true;
-        }
-        if (finalRow < 0 || finalRow > 7){
-            return true;
-        }
-        if (finalCol < 0 || finalCol > 7){
-            return true;
-        }
-
-        return false;
-    }
-
-
-    /**
      * Prints the current state of the Chess board. This is done in accordance with the project description.
      */
     public static void printBoard(){
@@ -57,10 +29,7 @@ public class Chess {
             for (int col = 0; col < board[row].length; col++){
 
                 if (board[row][col] == null){
-                    if (row % 2 == 0 && col % 2 == 1){
-                        System.out.print("## ");
-                    }
-                    else if (row % 2 == 1 && col % 2 == 0){
+                    if ( (row % 2 == 0 && col % 2 == 1) || (row % 2 == 1 && col % 2 == 0) ){
                         System.out.print("## ");
                     }
                     else {
@@ -73,7 +42,6 @@ public class Chess {
             }
             System.out.println(8-row);
         }
-
         System.out.println(" a  b  c  d  e  f  g  h\n");
     }
 
@@ -97,7 +65,10 @@ public class Chess {
             else fw  = new FileWriter("data/move-list.txt", false);
 
             BufferedWriter bw = new BufferedWriter(fw);
+            Piece movingPiece;
             String move;
+            int[] move_as_ia;
+            int startingRow, startingCol, finalRow, finalCol;
             boolean validMove = false;
 
             Setup.setBoard(board);
@@ -110,7 +81,33 @@ public class Chess {
     
                 validMove = InputParser.check_special_input(move, bw);
 
-                if (validMove) moveNumber++;
+                if ( !validMove ){
+                    move_as_ia = InputParser.parse_input(move);
+
+                    if (move_as_ia[0] != -1){
+                        startingRow = move_as_ia[0];
+                        startingCol = move_as_ia[1];
+                        finalRow = move_as_ia[2];
+                        finalCol = move_as_ia[3];
+                        movingPiece = board[startingRow][startingCol];
+                        validMove = movingPiece.legalMove(finalRow, finalCol);
+
+                        if (validMove){
+                            movingPiece.setRow(finalRow);
+                            movingPiece.setCol(finalCol);
+                            board[finalRow][finalCol] = movingPiece;
+                            board[startingRow][startingCol] = null;
+                            bw.write(move);
+                            bw.newLine();
+                            printBoard();
+                        }
+                    }
+                }
+
+                if (validMove){
+                    if ( !(move.equals("stop")) ) moveNumber++;
+                }
+                else System.out.println("Illegal move, try again");
             }
 
             bw.newLine();
