@@ -76,6 +76,10 @@ class InputParser {
             stop(bw);
             return true;
         }
+        if (move.equals("help")){
+            Setup.help();
+            return true;
+        }
         if (move.length() > 5){
 
             if (move.equals("resign")){

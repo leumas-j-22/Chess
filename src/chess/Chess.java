@@ -73,6 +73,8 @@ public class Chess {
 
             Setup.setBoard(board);
             printBoard();
+            System.out.println("Welcome to Chess, enter the first move! Type 'help' at any time for" +
+                                " additional information on gameplay.\n");
     
             while (play){
     
@@ -105,7 +107,7 @@ public class Chess {
                 }
 
                 if (validMove){
-                    if ( !(move.equals("stop")) ) moveNumber++;
+                    if ( !(move.equals("stop") || move.equals("help")) ) moveNumber++;
                 }
                 else System.out.println("Illegal move, try again");
             }
