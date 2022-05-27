@@ -83,6 +83,27 @@ class Setup {
 
         bKing.addPiece();
         wKing.addPiece();
+
+        // Populate the ArrayLists in the Chess class with all the alive pieces
+        populate_al();
+    }
+
+
+    private static void populate_al(){
+        int[] startRows = {0, 1, 6, 7};
+        Piece piece;
+
+        for (int i = 0; i < startRows.length; i++){
+            for (int j = 0; j < Chess.NUM_COLS; j++){
+                piece = Chess.board[startRows[i]][j];
+
+                // This case should not occur, but have it here just in case
+                if (piece == null) continue;
+
+                if (piece.getTeam() == 'w') Chess.whiteAlive.add(piece);
+                else Chess.blackAlive.add(piece);
+            }
+        }
     }
 
 
