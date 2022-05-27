@@ -53,6 +53,35 @@ public class Chess {
     }
 
 
+    // legalMove() method in each piece class checks if there is a piece on the same team in the space
+    // the piece is moving to - don't need to check that here
+    static boolean enemy_piece(int finalRow, int finalCol){
+        if (board[finalRow][finalCol] == null) return false;
+        return true;
+    }
+
+
+    static void kill_piece(Piece attacker, Piece captured, BufferedWriter bw){
+        try {
+            if (captured.getTeam() == 'w'){
+                whiteKilled.add(captured);
+                whiteAlive.remove(captured);
+            }
+            else {
+                blackKilled.add(captured);
+                blackAlive.remove(captured);
+            }
+
+            bw.write("   " + attacker.getTeam() + attacker.getType() + " captures " + captured.getTeam() +
+                        captured.getType() + " at space " + Conversion.retrieve_col(captured.getCol()) +
+                        Conversion.retrieve_row(captured.getRow()));
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
     /**
      * Runs a game of chess. White starts with the first move.
      * 
@@ -72,7 +101,7 @@ public class Chess {
             else fw  = new FileWriter("data/move-list.txt", false);
 
             BufferedWriter bw = new BufferedWriter(fw);
-            Piece movingPiece;
+            Piece movingPiece, enemyPiece;
             String move;
             int[] move_as_ia;
             int startingRow, startingCol, finalRow, finalCol;
@@ -102,12 +131,18 @@ public class Chess {
                         validMove = movingPiece.legalMove(finalRow, finalCol);
 
                         if (validMove){
+                            bw.write(move);
+
+                            if (enemy_piece(finalRow, finalCol)){
+                                enemyPiece = board[finalRow][finalCol];
+                                kill_piece(movingPiece, enemyPiece, bw);
+                            }
+
+                            bw.newLine();
                             movingPiece.setRow(finalRow);
                             movingPiece.setCol(finalCol);
                             board[finalRow][finalCol] = movingPiece;
                             board[startingRow][startingCol] = null;
-                            bw.write(move);
-                            bw.newLine();
                             printBoard();
                         }
                     }
