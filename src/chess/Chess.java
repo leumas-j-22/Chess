@@ -1,6 +1,7 @@
 package chess;
 import chess.pieces.*;
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -13,10 +14,16 @@ import java.io.IOException;
  */
 public class Chess {
 
+    static final int NUM_ROWS = 8;
+    static final int NUM_COLS = 8;
     static Scanner scanner = new Scanner(System.in);
     static Piece[][] board = new Piece[8][8];
     static int moveNumber = 0;
     static boolean play = true;
+    static ArrayList<Piece> whiteAlive = new ArrayList<>();
+    static ArrayList<Piece> blackAlive = new ArrayList<>();
+    static ArrayList<Piece> whiteKilled = new ArrayList<>();
+    static ArrayList<Piece> blackKilled = new ArrayList<>();
 
     /**
      * Prints the current state of the Chess board. This is done in accordance with the project description.
