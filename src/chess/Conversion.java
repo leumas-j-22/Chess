@@ -81,5 +81,10 @@ public class Conversion {
         }
 
         return piece_col.get(col);
-    }  
+    }
+    
+    
+    public static int retrieve_row(int row){
+        return 8 - row;
+    }
 }
