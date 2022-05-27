@@ -84,4 +84,30 @@ class Setup {
         bKing.addPiece();
         wKing.addPiece();
     }
+
+
+    static void help(){
+        String input;
+        System.out.print("\nHelp menu:\n" +
+                    "White moves first, Black moves second, and it continues alternating.\n" +
+                    "From left-to-right, the columns are labeled 'a' through 'h'. From top-to-bottom the" +
+                    " rows are numbered '8' through '1'.\n" +
+                    "To enter a valid move, indicate the starting and ending position, separated by a" +
+                    " space, for the piece you would like to move.\nExample for a white pawn --> a2 a4\n" +
+                    "To request a draw, enter a valid move followed by 'draw?'. Ex: e7 e6 draw?\n" +
+                    "To resign from the game, enter 'resign'.\n" +
+                    "Have fun!\n\n" +
+                    "Enter 'q' to exit the help menu: ");
+
+        while (true){
+            input = Chess.scanner.nextLine();
+            input = input.trim().toLowerCase();
+
+            if (input.equals("q")){
+                System.out.println("Successfully exited the help menu. Enter your next move.\n");
+                return;
+            }
+            System.out.print("Invalid input. Please enter 'q' to exit the help menu: ");
+        }
+    }
 }
