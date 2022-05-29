@@ -26,6 +26,7 @@ public class Chess {
     static ArrayList<Piece> blackKilled = new ArrayList<>();
 
 
+    // For an entered move by the user - need to check if both starting space and ending space are in bounds
     public static boolean in_bounds(ArrayList<int[]> values){
         for (int[] ia : values){
             for (int i = 0; i < ia.length; i++){
@@ -37,6 +38,15 @@ public class Chess {
 
         return true;
     }
+
+
+    // Checking if a move is in bounds when you know the piece is starting from a space that is in bounds
+    public static boolean in_bounds(int finalRow, int finalCol){
+        if ( (finalRow >= 0 && finalRow <= 7) && (finalCol >= 0 && finalCol <= 7)) return true;
+
+        return false;
+    }
+
 
     /**
      * Prints the current state of the Chess board. This is done in accordance with the project description.
@@ -95,6 +105,19 @@ public class Chess {
     }
 
 
+    static void check_print(BufferedWriter bw){
+        try {
+            bw.write("Check");
+            if (moveNumber % 2 == 1) bw.write("   White King is in check!");
+            else bw.write("   Black King is in check!");
+            bw.newLine();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
     /**
      * Runs a game of chess. White starts with the first move.
      * 
@@ -137,19 +160,6 @@ public class Chess {
 
                 if ( !validMove ){
 
-                    // White's move
-                    if (moveNumber % 2 == 0){
-                        if (king_in_check = whiteKing.check(blackAlive)){
-                            System.out.println("White king is in check!");
-                        }
-                    }
-                    // Black's move
-                    else {
-                        if (king_in_check = blackKing.check(whiteAlive)){
-                            System.out.println("Black king is in check!");
-                        }
-                    }
-
                     move_as_al = InputParser.parse_input(move);
 
                     if (move_as_al.get(0)[0] != -1){
@@ -174,6 +184,21 @@ public class Chess {
                             board[finalRow][finalCol] = movingPiece;
                             board[startingRow][startingCol] = null;
                             printBoard();
+
+                            // Black just moved - check if White is in check
+                            if (moveNumber % 2 == 1){
+                                if (king_in_check = whiteKing.check(blackAlive, whiteKing.getRow(), whiteKing.getCol())){
+                                    System.out.println("White King is in check!");
+                                    check_print(bw);
+                                }
+                            }
+                            // White just moved - check if Black is in check
+                            else {
+                                if (king_in_check = blackKing.check(whiteAlive, blackKing.getRow(), blackKing.getCol())){
+                                    System.out.println("Black King is in check!");
+                                    check_print(bw);
+                                }
+                            }
                         }
                     }
                 }
