@@ -1,4 +1,5 @@
 package chess.pieces;
+import java.util.ArrayList;
 
 /**
  * The <code>King</code> class extends the abstract class <code>Piece</code> and creates a King.
@@ -38,14 +39,13 @@ public class King extends Piece {
      * @return <code>true</code> if it is a legal move, <code>false</code> otherwise
      */
     public boolean legalMove(int finalRow, int finalCol){
-
         int startingRow = getRow();
         int startingCol = getCol();
         Piece[][] board = getBoard();
         char piece_moving_team = getTeam();
 
         int rowChange = Math.abs(finalRow - startingRow);
-        int colChange = Math.abs(finalRow - startingCol);
+        int colChange = Math.abs(finalCol - startingCol);
 
         if (rowChange == 1 && colChange == 1){
 
@@ -76,6 +76,18 @@ public class King extends Piece {
         }
 
         // Not a legal move at this point
+        return false;
+    }
+
+
+    public boolean check(ArrayList<Piece> enemyPieces){
+        int kRow = getRow();
+        int kCol = getCol();
+
+        for (Piece piece : enemyPieces){
+            if (piece.legalMove(kRow, kCol)) return true;
+        }
+
         return false;
     }
 }
