@@ -25,6 +25,19 @@ public class Chess {
     static ArrayList<Piece> whiteKilled = new ArrayList<>();
     static ArrayList<Piece> blackKilled = new ArrayList<>();
 
+
+    public static boolean in_bounds(ArrayList<int[]> values){
+        for (int[] ia : values){
+            for (int i = 0; i < ia.length; i++){
+                if (ia[i] < 0 || ia[i] > 7){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Prints the current state of the Chess board. This is done in accordance with the project description.
      */
@@ -103,11 +116,14 @@ public class Chess {
             BufferedWriter bw = new BufferedWriter(fw);
             Piece movingPiece, enemyPiece;
             String move;
-            int[] move_as_ia;
+            ArrayList<int[]> move_as_al = new ArrayList<>();
             int startingRow, startingCol, finalRow, finalCol;
             boolean validMove = false;
+            boolean king_in_check = false;
 
             Setup.setBoard(board);
+            King blackKing = (King) board[0][4];
+            King whiteKing = (King) board[7][4];
             printBoard();
             System.out.println("Welcome to Chess, enter the first move! Type 'help' at any time for" +
                                 " additional information on gameplay.\n");
@@ -120,13 +136,27 @@ public class Chess {
                 validMove = InputParser.check_special_input(move, bw);
 
                 if ( !validMove ){
-                    move_as_ia = InputParser.parse_input(move);
 
-                    if (move_as_ia[0] != -1){
-                        startingRow = move_as_ia[0];
-                        startingCol = move_as_ia[1];
-                        finalRow = move_as_ia[2];
-                        finalCol = move_as_ia[3];
+                    // White's move
+                    if (moveNumber % 2 == 0){
+                        if (king_in_check = whiteKing.check(blackAlive)){
+                            System.out.println("White king is in check!");
+                        }
+                    }
+                    // Black's move
+                    else {
+                        if (king_in_check = blackKing.check(whiteAlive)){
+                            System.out.println("Black king is in check!");
+                        }
+                    }
+
+                    move_as_al = InputParser.parse_input(move);
+
+                    if (move_as_al.get(0)[0] != -1){
+                        startingRow = move_as_al.get(0)[0];
+                        startingCol = move_as_al.get(0)[1];
+                        finalRow = move_as_al.get(1)[0];
+                        finalCol = move_as_al.get(1)[1];
                         movingPiece = board[startingRow][startingCol];
                         validMove = movingPiece.legalMove(finalRow, finalCol);
 
