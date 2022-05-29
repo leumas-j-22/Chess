@@ -1,23 +1,16 @@
 package chess;
 import chess.pieces.*;
+import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
 class InputParser {
 
-    static boolean in_bounds(int[] values){
-        for (int i = 0; i < values.length; i++){
-            if (values[i] < 0 || values[i] > 7){
-                return false;
-            }
-        }
+    static boolean different_space(ArrayList<int[]> values){
+        int[] startingSpace = values.get(0);
+        int[] finalSpace = values.get(1);
 
-        return true;
-    }
-
-
-    static boolean different_space(int[] values){
-        if ((values[0] == values[2]) && (values[1] == values[3])){
+        if ((startingSpace[0] == finalSpace[0]) && (startingSpace[1] == finalSpace[1])){
             return false;
         }
 
@@ -25,6 +18,7 @@ class InputParser {
     }
 
 
+    // Only need the starting space for this method
     static boolean good_piece(int[] values){
         Piece piece = Chess.board[values[0]][values[1]];
 
@@ -38,8 +32,8 @@ class InputParser {
     }
 
 
-    static int[] parse_input(String move){
-        int[] result = new int[4];
+    static ArrayList<int[]> parse_input(String move){
+        ArrayList<int[]> result = new ArrayList<>();
         int startingRow, startingCol, finalRow, finalCol;
 
         // Example of a valid move: a2 a4
@@ -54,17 +48,22 @@ class InputParser {
             finalRow = 7 - (finalRow - '1');
             finalCol = finalCol - 'a';
 
-            result[0] = startingRow;
-            result[1] = startingCol;
-            result[2] = finalRow;
-            result[3] = finalCol;
+            int[] startingSpace = {startingRow, startingCol};
+            int[] finalSpace = {finalRow, finalCol};
+            result.add(startingSpace);
+            result.add(finalSpace);
 
-            if ( in_bounds(result) && different_space(result) && good_piece(result) ){
+            if ( Chess.in_bounds(result) && different_space(result) && good_piece(startingSpace) ){
                 return result;
             }
         }
 
-        result[0] = -1;
+        if (result.size() == 0){
+            int[] filler = {-1};
+            result.add(filler);
+        }
+        else result.get(0)[0] = -1;
+
         return result;
     }
 
