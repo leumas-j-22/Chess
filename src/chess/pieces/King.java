@@ -80,14 +80,33 @@ public class King extends Piece {
     }
 
 
-    public boolean check(ArrayList<Piece> enemyPieces){
-        int kRow = getRow();
-        int kCol = getCol();
+    public boolean check(ArrayList<Piece> enemyPieces, int kRow, int kCol){
 
         for (Piece piece : enemyPieces){
             if (piece.legalMove(kRow, kCol)) return true;
         }
 
         return false;
+    }
+
+
+    public ArrayList<int[]> checkmate(ArrayList<Piece> enemyPieces){
+        ArrayList<int[]> safeMoves = new ArrayList<>();
+        char team = getTeam();
+        int kRow = getRow();
+        int kCol = getCol();
+        int startRow, startCol;
+
+        for (startRow = kRow - 1; startRow <= kRow + 1; startRow++){
+
+            for (startCol = kCol - 1; startCol <= kCol + 1; startCol++){
+                if (team == 'w'){
+
+                }
+            }
+        }
+
+
+        return safeMoves;
     }
 }
