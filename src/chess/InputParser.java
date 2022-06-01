@@ -5,6 +5,13 @@ import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
+/**
+ * This class parses input from the user. Input is broken up into two categories - regular input and special
+ * input. Regular input is any 5-character, regular move, such as "e2 e4". Special input involves the
+ * keywords "stop", "help", "resign", and "draw?". Appropriate action and returns are made for all cases.
+ * 
+ * @author Sam Jones
+ */
 class InputParser {
 
     /**
@@ -97,7 +104,15 @@ class InputParser {
     }
 
     
-    // TODO - not done here
+    /**
+     * Checks for any special input the user may have entered. "stop" ends the current game, "help"
+     * brings the user to the help menu, a user can resign with "resign", and a user can request a draw
+     * with "draw?" appended to an otherwise legal move.
+     * 
+     * @param move The move the user entered
+     * @param bw The character buffer to write to
+     * @return {@code true} if the user has entered special input, {@code false} otherwise
+     */
     static boolean check_special_input(String move, BufferedWriter bw){
         int index;
 
@@ -116,13 +131,23 @@ class InputParser {
                 return true;
             }
             if ((index = has_two_spaces(move)) != -1){
-
                 String thirdWord = move.substring(index, move.length());
 
-                // Need to check that a valid move is entered along with draw?
                 if (thirdWord.equals("draw?")){
-                    draw(move, bw);
-                    return true;
+                    String first_and_second_words = move.substring(0, index-1);
+                    System.out.println("FIRST AND SECOND WORDS: " + first_and_second_words);
+                    ArrayList<int[]> move_as_al = parse_input(first_and_second_words);
+                    int[] startingSpace = move_as_al.get(0);
+
+                    if (startingSpace[0] != -1){
+                        int[] endingSpace = move_as_al.get(1);
+                        Piece piece = Chess.board[startingSpace[0]][startingSpace[1]];
+
+                        if (piece.legalMove(endingSpace[0], endingSpace[1])){
+                            draw(move, bw);
+                            return true;
+                        }
+                    }
                 }
             }
         }
