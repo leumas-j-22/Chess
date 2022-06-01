@@ -1,6 +1,5 @@
 package chess;
 
-import chess.pieces.*;
 import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -33,7 +32,6 @@ class InputParser {
         return true;
     }
 
-
     /**
      * Verifies that there is a piece in the spot the user wants to move from and also that it is that
      * piece's turn to move.
@@ -55,6 +53,19 @@ class InputParser {
     }
 
 
+    // TODO - more testing with this
+    static boolean good_promotion(String move){
+        if (move.length() == 7 && has_two_spaces(move) != -1){
+            if (move.charAt(6) == 'Q') return true;
+            if (move.charAt(6) == 'R') return true;
+            if (move.charAt(6) == 'B') return true;
+            if (move.charAt(6) == 'N') return true;
+        }
+
+        return false;
+    }
+
+    // TODO - more testing with this
     /**
      * Parses a regular move inputted by the user. Converts regular chess rows and columns to the
      * corresponding array indices. For example, the move "a2 a4" will be returned as an ArrayList of
@@ -73,7 +84,7 @@ class InputParser {
         int startingRow, startingCol, finalRow, finalCol;
 
         // Example of a valid move: a2 a4
-        if (move.length() == 5){
+        if (move.length() == 5 || good_promotion(move)){
             startingRow = move.charAt(1);
             startingCol = move.charAt(0);
             finalRow = move.charAt(4);
@@ -103,7 +114,6 @@ class InputParser {
         return result;
     }
 
-    
     /**
      * Checks for any special input the user may have entered. "stop" ends the current game, "help"
      * brings the user to the help menu, a user can resign with "resign", and a user can request a draw
@@ -155,7 +165,6 @@ class InputParser {
         return false;
     }
 
-
     /**
      * Writes the appropriate resign documentation to the text file and ends the game if a user resigns.
      * 
@@ -183,7 +192,6 @@ class InputParser {
         }
     }
 
-
     /**
      * Writes the appropriate draw documentation to the text file and ends the game if a user requests
      * a draw.
@@ -205,7 +213,6 @@ class InputParser {
         }
     }
 
-
     /**
      * Writes "stop" to the text file and ends the game if the user enters "stop".
      * 
@@ -221,7 +228,6 @@ class InputParser {
             e.printStackTrace();
         }
     }
-
 
     /**
      * For a move that has three elements (two spaces) (Example: "e2 e4 draw?"). Returns the first

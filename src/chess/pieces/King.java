@@ -1,5 +1,6 @@
 package chess.pieces;
 
+import chess.Piece;
 import java.util.ArrayList;
 
 /**
@@ -25,7 +26,6 @@ public class King extends Piece {
     public King(Piece[][] board, int row, int col, char team, char type){
         super(board, row, col, team, type);
     }
-
 
     /**
      * Checks if the entered space represents a legal move for a King. {@code Chess} already checks 
@@ -80,7 +80,6 @@ public class King extends Piece {
         return false;
     }
 
-
     /**
      * Determines if the King is in check. This method loops through all pieces on the opposing team and
      * sees if any of them can capture the King with a single move. It uses the {@code legalMove()} method
@@ -100,7 +99,7 @@ public class King extends Piece {
         return false;
     }
 
-
+    
     public ArrayList<int[]> checkmate(ArrayList<Piece> enemyPieces){
         ArrayList<int[]> safeMoves = new ArrayList<>();
         char team = getTeam();

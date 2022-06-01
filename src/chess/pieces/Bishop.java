@@ -1,5 +1,7 @@
 package chess.pieces;
 
+import chess.Piece;
+
 /**
  * The <code>Bishop</code> class extends the abstract class <code>Piece</code> and creates a Bishop.
  * It implements the abstract method <code>legalMove()</code>, and all other instance variables and
@@ -23,7 +25,6 @@ public class Bishop extends Piece {
     public Bishop(Piece[][] board, int row, int col, char team, char type){
         super(board, row, col, team, type);
     }
-
 
     /**
      * Checks if the entered space represents a legal move for a Bishop. <code>Chess</code> already checks 

@@ -1,5 +1,7 @@
 package chess.pieces;
 
+import chess.Piece;
+
 /**
  * The <code>Pawn</code> class extends the abstract class <code>Piece</code> and creates a Pawn.
  * It implements the abstract method <code>legalMove()</code>, and all other instance variables and
@@ -23,7 +25,6 @@ public class Pawn extends Piece {
     public Pawn(Piece[][] board, int row, int col, char team, char type){
         super(board, row, col, team, type);
     }
-
 
     /**
      * Checks if the entered space represents a legal move for a Pawn. <code>Chess</code> already checks 
@@ -112,6 +113,15 @@ public class Pawn extends Piece {
     }
 
 
+    public boolean valid_promotion(){
+        char team = getTeam();
+        int row = getRow();
+
+        if (team == 'b' && row == 7) return true;
+        if (team == 'w' && row == 0) return true;
+        return false;
+    }
+
     /**
      * Promotes a Pawn if it has reached the other end of the board.
      * 
@@ -120,8 +130,7 @@ public class Pawn extends Piece {
      *                for Bishop, and 'N' for Knight
      * @return The piece the Pawn is promoted to
      */
-    public static Piece promotion(Piece pawn_to_promote, char upgrade){
-
+    public Piece promotion(Pawn pawn_to_promote, char upgrade){
         Piece[][] board = pawn_to_promote.getBoard();
         char team = pawn_to_promote.getTeam();
         int row = pawn_to_promote.getRow();

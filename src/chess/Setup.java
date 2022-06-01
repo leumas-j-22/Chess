@@ -32,7 +32,6 @@ class Setup {
         }
     }
 
-
     /**
      * Sets the board at the beginning of the game.
      * 
@@ -89,11 +88,7 @@ class Setup {
         Piece wKing = new King(board, 7, 4, 'w', 'K');
         bKing.addPiece();
         wKing.addPiece();
-
-        // Populate the ArrayLists in the Chess class with all the alive pieces
-        populate_al();
     }
-
 
     /**
      * Populates the ArrayList of White pieces in play and the ArrayList of Black pieces in play at the
@@ -115,7 +110,6 @@ class Setup {
             }
         }
     }
-
 
     /**
      * Help menu the user can access at any time by entering "help".

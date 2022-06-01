@@ -94,7 +94,6 @@ public class Chess {
         return true;
     }
 
-
     /**
      * Checks if an entered move is in bounds when you know the current piece is starting from a legal
      * position. finalRow and finalCol should both be array indices.
@@ -108,7 +107,6 @@ public class Chess {
 
         return false;
     }
-
 
     /**
      * Prints the current state of the chess board. This is done in accordance with the project description.
@@ -136,7 +134,6 @@ public class Chess {
         }
         System.out.println(" a  b  c  d  e  f  g  h\n");
     }
-
 
     /**
      * Checks if an enemy piece is present in the space the current piece would like to move to. The
@@ -173,7 +170,6 @@ public class Chess {
         }
     }
 
-
     /**
      * Appropriately writes "Check" to the text file and a message for which King is in check.
      * 
@@ -190,7 +186,6 @@ public class Chess {
             e.printStackTrace();
         }
     }
-
 
     /**
      * Runs a game of chess. White starts with the first move.
@@ -219,6 +214,8 @@ public class Chess {
             boolean king_in_check = false;
 
             Setup.setBoard(board);
+            System.out.println("NUMBER OF WHITE PIECES: " + whiteAlive.size());
+            System.out.println("NUMBER OF BLACK PIECES: " + blackAlive.size());
             King blackKing = (King) board[0][4];
             King whiteKing = (King) board[7][4];
             printBoard();
@@ -252,11 +249,24 @@ public class Chess {
                                 kill_piece(movingPiece, enemyPiece, bw);
                             }
 
-                            bw.newLine();
                             movingPiece.setRow(finalRow);
                             movingPiece.setCol(finalCol);
                             board[finalRow][finalCol] = movingPiece;
                             board[startingRow][startingCol] = null;
+
+                            // TODO - more testing (ex: if last char isn't Q, R, B, or N)
+                            if (movingPiece instanceof Pawn && (finalRow == 0 || finalRow == 7)){
+                                Pawn pawn = (Pawn) movingPiece;
+                                
+                                if (pawn.valid_promotion()){
+                                    if (move.length() == 7) movingPiece = pawn.promotion(pawn, move.charAt(6));
+                                    else movingPiece = pawn.promotion(pawn, 'Q');
+                                    board[finalRow][finalCol].removePiece();
+                                    movingPiece.addPiece();
+                                } 
+                            }
+
+                            bw.newLine();
                             printBoard();
 
                             // Black just moved - check if White is in check

@@ -48,7 +48,6 @@ public class Conversion {
         piece_col.put(7, 'h');
     }
 
-
     /**
      * Calls the {@code init()} method if the two class-level HashMaps are null. Then, takes the
      * inputted piece type and returns the full {@code String} version of it. This method uses the
@@ -80,7 +79,6 @@ public class Conversion {
 
         return piece_type.get(type);
     }
-
 
     /**
      * Calls the {@code init()} method if the two class-level HashMaps are null. Then, takes the
@@ -115,7 +113,6 @@ public class Conversion {
 
         return piece_col.get(col);
     }
-    
     
     /**
      * An actual chess board starts at the top with row 8 and descends to row 1 at the bottom. However,

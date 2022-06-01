@@ -1,6 +1,4 @@
-package chess.pieces;
-
-import chess.Conversion;
+package chess;
 
 /**
  * Abstract class {@code Piece} that has {@code board}, {@code row}, {@code col}, {@code team}, and
@@ -37,12 +35,13 @@ public abstract class Piece {
      */
     private char type;
 
+
     /**
      * The {@code Piece} constuctor will be called in the {@code King}, {@code Queen}, {@code Rook},
      * {@code Bishop}, {@code Knight}, and {@code Pawn} subclasses to create the respective pieces.
      * <p>
-     * This constructor only needs package level access because the {@code Piece} class and the
-     * classes for all the pieces are in the same package.
+     * The constructor needs protected-level access because the {@code Piece} class is in a different
+     * package than the classes for the individual pieces.
      * 
      * @param board The board
      * @param row The row the piece is in
@@ -50,13 +49,14 @@ public abstract class Piece {
      * @param team The team the piece is on ('w' for white, 'b' for black)
      * @param type The type of the piece
      */
-    Piece(Piece[][] board, int row, int col, char team, char type){
+    protected Piece(Piece[][] board, int row, int col, char team, char type){
         this.board = board;        
         this.row = row;
         this.col = col;
         this.team = team;
         this.type = type;        
     }
+
 
     /**
      * Sets the board that the piece will have access to.
@@ -139,9 +139,12 @@ public abstract class Piece {
     }
 
     /**
-     * Adds the current piece to the chess board. This method is inherited by all the {@code Piece}
-     * subclasses ({@code King}, {@code Queen}, {@code Rook}, etc.), and will be called for the run-time
-     * type of the object (hence the use of this).
+     * Adds the current piece to the chess board. If the piece is on the White team, it adds it to the
+     * ArrayList of White pieces in play. If the piece is on the Black team, it adds it to the ArrayList
+     * of Black pieces in play.
+     * <p>
+     * This method is inherited by all the {@code Piece} subclasses ({@code King}, {@code Queen}, {@code Rook},
+     * etc.), and will be called for the run-time type of the object (hence the use of {@code this}).
      * <p>
      * For example:
      * <p><blockquote><pre>
@@ -154,18 +157,20 @@ public abstract class Piece {
      */
     public void addPiece(){
         board[row][col] = this;
+        if (team == 'w') Chess.whiteAlive.add(this);
+        else Chess.blackAlive.add(this);
     }
 
     /**
-     * Determines if the new row and new column that a piece is moving to is a legal move for that piece.
-     * This abstract method will be implemented in each of the subclasses.
-     * 
-     * @param newRow The new row the piece is moving to
-     * @param newCol The new column the piece is moving to
-     * @return {@code true} if it is a legal move, {@code false} otherwise
+     * Removes the current piece from the board. If the piece is White, it is removed from the ArrayList
+     * of White pieces in play. If it is Black, it is removed from the ArrayList of Black pieces
+     * in play.
      */
-    public abstract boolean legalMove(int newRow, int newCol);
-
+    void removePiece(){
+        board[row][col] = null;
+        if (team == 'w') Chess.whiteAlive.remove(this);
+        else Chess.blackAlive.remove(this);
+    }
 
     /**
      * Overrides the {@code Object} class's {@code toString()} method. Prints out valuable information for
@@ -193,4 +198,14 @@ public abstract class Piece {
                "Type:\t\t" + type_as_str + "\n" +
                "Position:\t" + c + r + "\n";
     }
+
+    /**
+     * Determines if the new row and new column that a piece is moving to is a legal move for that piece.
+     * This abstract method will be implemented in each of the subclasses.
+     * 
+     * @param newRow The new row the piece is moving to
+     * @param newCol The new column the piece is moving to
+     * @return {@code true} if it is a legal move, {@code false} otherwise
+     */
+    public abstract boolean legalMove(int newRow, int newCol);
 }

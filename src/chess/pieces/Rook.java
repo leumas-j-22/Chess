@@ -1,5 +1,7 @@
 package chess.pieces;
 
+import chess.Piece;
+
 /**
  * The <code>Rook</code> class extends the abstract class <code>Piece</code> and creates a Rook.
  * It implements the abstract method <code>legalMove()</code>, and all other instance variables and
@@ -24,7 +26,6 @@ public class Rook extends Piece {
         super(board, row, col, team, type);
     }
     
-
     /**
      * Checks if the entered space represents a legal move for a Rook. <code>Chess</code> already checks 
      * if the entered move is out of bounds or if it isn't a move at all (row and column values don't change),
