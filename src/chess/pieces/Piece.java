@@ -1,12 +1,12 @@
 package chess.pieces;
+
 import chess.Conversion;
 
 /**
- * Abstract class <code>Piece</code> that has <code>row</code>, <code>col</code>, <code>team</code>,
- * <code>type</code>, <code>board</code>, and <code>turn</code> fields. Each chess piece - King, Queen,
- * Rook, Bishop, Knight, and Pawn - will inherit the fields and non-abstract methods from the
- * <code>Piece</code> superclass. They will each implement the <code>legalMove()</code> method in their
- * respective class.
+ * Abstract class {@code Piece} that has {@code board}, {@code row}, {@code col}, {@code team}, and
+ * {@code type} fields. Each chess piece - King, Queen, Rook, Bishop, Knight, and Pawn - will inherit
+ * the fields and non-abstract methods from the {@code Piece} superclass. They will each implement the
+ * {@code legalMove()} method in their respective class.
  * 
  * @author Sam Jones
  * @author Jacob Figueredo
@@ -38,11 +38,10 @@ public abstract class Piece {
     private char type;
 
     /**
-     * The <code>Piece</code> constuctor will be called in the <code>King</code>, <code>Queen</code>,
-     * <code>Rook</code>, <code>Bishop</code>, <code>Knight</code>, and <code>Pawn</code> subclasses
-     * to create the respective pieces.
+     * The {@code Piece} constuctor will be called in the {@code King}, {@code Queen}, {@code Rook},
+     * {@code Bishop}, {@code Knight}, and {@code Pawn} subclasses to create the respective pieces.
      * <p>
-     * This constructor only needs package level access because the <code>Piece</code> class and the
+     * This constructor only needs package level access because the {@code Piece} class and the
      * classes for all the pieces are in the same package.
      * 
      * @param board The board
@@ -140,9 +139,9 @@ public abstract class Piece {
     }
 
     /**
-     * Adds the current piece to the chess board. This method is inherited by all the <code>Piece</code>
-     * subclasses (<code>King</code>, <code>Queen</code>, <code>Rook</code>, etc.), and will be called
-     * for the run-time type of the object (hence the use of this).
+     * Adds the current piece to the chess board. This method is inherited by all the {@code Piece}
+     * subclasses ({@code King}, {@code Queen}, {@code Rook}, etc.), and will be called for the run-time
+     * type of the object (hence the use of this).
      * <p>
      * For example:
      * <p><blockquote><pre>
@@ -150,7 +149,7 @@ public abstract class Piece {
      *bRook1.addPiece(); 
      * </pre></blockquote></p>
      * 
-     * The dynamic type of bRook1 is <code>Rook</code>, so calling <code>addPiece()</code> above will add
+     * The dynamic type of bRook1 is {@code Rook}, so calling {@code addPiece()} above will add
      * the Rook to the board.
      */
     public void addPiece(){
@@ -163,11 +162,17 @@ public abstract class Piece {
      * 
      * @param newRow The new row the piece is moving to
      * @param newCol The new column the piece is moving to
-     * @return <code>true</code> if it is a legal move, <code>false</code> otherwise
+     * @return {@code true} if it is a legal move, {@code false} otherwise
      */
     public abstract boolean legalMove(int newRow, int newCol);
 
 
+    /**
+     * Overrides the {@code Object} class's {@code toString()} method. Prints out valuable information for
+     * a given piece.
+     * 
+     * @return A String representation of the given Piece object
+     */
     public String toString(){
         String team_as_str, type_as_str;
         int r;

@@ -1,4 +1,5 @@
 package chess;
+
 import chess.pieces.*;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -14,19 +15,73 @@ import java.io.IOException;
  */
 public class Chess {
 
+    // Package-level static variables that can be accessed by other classes in the same package
+
+    /**
+     * The number of rows on the chess board.
+     */
     static final int NUM_ROWS = 8;
+
+    /**
+     * The number of columns on the chess board.
+     */
     static final int NUM_COLS = 8;
+
+    /**
+     * A Scanner object to read from standard input.
+     */
     static Scanner scanner = new Scanner(System.in);
+
+    /**
+     * The chess board.
+     */
     static Piece[][] board = new Piece[8][8];
+
+    /**
+     * To keep track of whether it is White or Black's move. If the move number divided by two yields a
+     * remainder of zero, then it is White's move. If the move number divided by two yields a remainder of
+     * one, then it is Black's move.
+     */
     static int moveNumber = 0;
+
+    /**
+     * Wheter or not the game is active.
+     */
     static boolean play = true;
+
+    /**
+     * An ArrayList for the White pieces still in play.
+     */
     static ArrayList<Piece> whiteAlive = new ArrayList<>();
+
+    /**
+     * An ArrayList for the Black pieces still in play.
+     */
     static ArrayList<Piece> blackAlive = new ArrayList<>();
+
+    /**
+     * An ArrayList for the White pieces that have been captured.
+     */
     static ArrayList<Piece> whiteKilled = new ArrayList<>();
+
+    /**
+     * An ArrayList for the Black pieces that have been captured.
+     */
     static ArrayList<Piece> blackKilled = new ArrayList<>();
 
 
-    // For an entered move by the user - need to check if both starting space and ending space are in bounds
+    /**
+     * Used to check if entered spaces are in bounds. The chess board is an 8x8 2-D array, with both rows
+     * and columns going from indices 0 to 7.
+     * <p>
+     * This method is useful for determining if the starting and ending spaces entered by a user are in
+     * bounds. For example, consider the user entering the move "e2 e4". The first int array in the ArrayList
+     * will contain {6, 4} (e2 converted to array indices). And the second int array will contain {4, 4}
+     * (e4 converted to array indices).
+     * 
+     * @param values An ArrayList of int arrays, each int array representing a different space on the board
+     * @return {@code true} if the entered move is in bounds, {@code false} otherwise
+     */
     public static boolean in_bounds(ArrayList<int[]> values){
         for (int[] ia : values){
             for (int i = 0; i < ia.length; i++){
@@ -40,7 +95,14 @@ public class Chess {
     }
 
 
-    // Checking if a move is in bounds when you know the piece is starting from a space that is in bounds
+    /**
+     * Checks if an entered move is in bounds when you know the current piece is starting from a legal
+     * position. finalRow and finalCol should both be array indices.
+     * 
+     * @param finalRow The row the piece is moving to
+     * @param finalCol The column the piece is moving to
+     * @return {@code true} if the entered move is in bounds, {@code false} otherwise
+     */
     public static boolean in_bounds(int finalRow, int finalCol){
         if ( (finalRow >= 0 && finalRow <= 7) && (finalCol >= 0 && finalCol <= 7)) return true;
 
@@ -49,7 +111,7 @@ public class Chess {
 
 
     /**
-     * Prints the current state of the Chess board. This is done in accordance with the project description.
+     * Prints the current state of the chess board. This is done in accordance with the project description.
      */
     public static void printBoard(){
 
@@ -76,8 +138,15 @@ public class Chess {
     }
 
 
-    // legalMove() method in each piece class checks if there is a piece on the same team in the space
-    // the piece is moving to - don't need to check that here
+    /**
+     * Checks if an enemy piece is present in the space the current piece would like to move to. The
+     * {@code legalMove()} method in the class for each piece already checks if there is a piece on the same team
+     * in the desired space, so that does not need to be verified here.
+     * 
+     * @param finalRow The row the piece is moving to
+     * @param finalCol The column the piece is moving to
+     * @return {@code true} if an enemy piece is present in the space, {@code false} otherwise
+     */
     static boolean enemy_piece(int finalRow, int finalCol){
         if (board[finalRow][finalCol] == null) return false;
         return true;
@@ -105,6 +174,11 @@ public class Chess {
     }
 
 
+    /**
+     * Appropriately writes "Check" to the text file and a message for which King is in check.
+     * 
+     * @param bw The character buffer to write to
+     */
     static void check_print(BufferedWriter bw){
         try {
             bw.write("Check");

@@ -1,9 +1,10 @@
 package chess.pieces;
+
 import java.util.ArrayList;
 
 /**
- * The <code>King</code> class extends the abstract class <code>Piece</code> and creates a King.
- * It implements the abstract method <code>legalMove()</code>, and all other instance variables and
+ * The {@code King} class extends the abstract class {@code Piece} and creates a King.
+ * It implements the abstract method {@code legalMove()}, and all other instance variables and
  * non-abstract methods are inherited.
  * 
  * @author Sam Jones
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 public class King extends Piece {
 
     /**
-     * Calls the <code>Piece</code> superclass constructor to create a King.
+     * Calls the {@code Piece} superclass constructor to create a King.
      * 
      * @param board The chess board
      * @param row The row the piece is in
@@ -27,7 +28,7 @@ public class King extends Piece {
 
 
     /**
-     * Checks if the entered space represents a legal move for a King. <code>Chess</code> already checks 
+     * Checks if the entered space represents a legal move for a King. {@code Chess} already checks 
      * if the entered move is out of bounds or if it isn't a move at all (row and column values don't change),
      * so those don't need to be checked here.
      * <p>
@@ -36,7 +37,7 @@ public class King extends Piece {
      * 
      * @param finalRow The row you want to move the piece to
      * @param finalCol The column you want to move the piece to
-     * @return <code>true</code> if it is a legal move, <code>false</code> otherwise
+     * @return {@code true} if it is a legal move, {@code false} otherwise
      */
     public boolean legalMove(int finalRow, int finalCol){
         int startingRow = getRow();
@@ -80,6 +81,16 @@ public class King extends Piece {
     }
 
 
+    /**
+     * Determines if the King is in check. This method loops through all pieces on the opposing team and
+     * sees if any of them can capture the King with a single move. It uses the {@code legalMove()} method
+     * for each piece.
+     * 
+     * @param enemyPieces ArrayList of enemy pieces
+     * @param kRow The row the King is in
+     * @param kCol The column the King is in
+     * @return {@code true} if the King is in check, {@code false} otherwise
+     */
     public boolean check(ArrayList<Piece> enemyPieces, int kRow, int kCol){
 
         for (Piece piece : enemyPieces){
