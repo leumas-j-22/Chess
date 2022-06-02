@@ -3,8 +3,11 @@ package chess;
 import chess.pieces.*;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.InputStreamReader;
 import java.io.IOException;
 
 /**
@@ -38,6 +41,11 @@ public class Chess {
     static Piece[][] board = new Piece[8][8];
 
     /**
+     * The last entered move.
+     */
+    static String move = null;
+
+    /**
      * To keep track of whether it is White or Black's move. If the move number divided by two yields a
      * remainder of zero, then it is White's move. If the move number divided by two yields a remainder of
      * one, then it is Black's move.
@@ -45,9 +53,24 @@ public class Chess {
     static int moveNumber = 0;
 
     /**
-     * Wheter or not the game is active.
+     * Variable that indicates whether or not the game is active.
      */
     static boolean play = true;
+
+    /**
+     * Variable that indicates whether the entered move is legal or not.
+     */
+    private static boolean validMove = false;
+
+    /**
+     * Variable that determines whether or not to write to the text file of moves.
+     */
+    static boolean write = true;
+
+    /**
+     * Variable that indicates if moves from the previous game will be automated.
+     */
+    static boolean automate = false;
 
     /**
      * An ArrayList for the White pieces still in play.
@@ -136,50 +159,23 @@ public class Chess {
     }
 
     /**
-     * Checks if an enemy piece is present in the space the current piece would like to move to. The
-     * {@code legalMove()} method in the class for each piece already checks if there is a piece on the same team
-     * in the desired space, so that does not need to be verified here.
-     * 
-     * @param finalRow The row the piece is moving to
-     * @param finalCol The column the piece is moving to
-     * @return {@code true} if an enemy piece is present in the space, {@code false} otherwise
-     */
-    static boolean enemy_piece(int finalRow, int finalCol){
-        if (board[finalRow][finalCol] == null) return false;
-        return true;
-    }
-
-
-    static void kill_piece(Piece attacker, Piece captured, BufferedWriter bw){
-        try {
-            if (captured.getTeam() == 'w'){
-                whiteKilled.add(captured);
-                whiteAlive.remove(captured);
-            }
-            else {
-                blackKilled.add(captured);
-                blackAlive.remove(captured);
-            }
-
-            bw.write("   " + attacker.getTeam() + attacker.getType() + " captures " + captured.getTeam() +
-                        captured.getType() + " at space " + Conversion.retrieve_col(captured.getCol()) +
-                        Conversion.retrieve_row(captured.getRow()));
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Appropriately writes "Check" to the text file and a message for which King is in check.
      * 
      * @param bw The character buffer to write to
      */
-    static void check_print(BufferedWriter bw){
+    static void print_check(BufferedWriter bw){
         try {
             bw.write("Check");
-            if (moveNumber % 2 == 1) bw.write("   White King is in check!");
-            else bw.write("   Black King is in check!");
+
+            if (moveNumber % 2 == 1){
+                bw.write("   White King is in check!");
+                System.out.println("White King is in check!");
+            }
+            else {
+                bw.write("   Black King is in check!");
+                System.out.println("Black King is in check!");
+            }
+
             bw.newLine();
         }
         catch (IOException e){
@@ -190,113 +186,147 @@ public class Chess {
     /**
      * Runs a game of chess. White starts with the first move.
      * 
+     * @param rd Buffer to read moves from - buffer is reading from Standard Input, or a text file with
+     * a list of moves from the previous game
+     * @param wr Buffer to write expanded gameplay info to
+     * @param wr_compact Buffer to write compact gameplay info to
+     */
+    private static void play(BufferedReader rd, BufferedWriter wr, BufferedWriter wr_compact){
+        Piece movingPiece, enemyPiece;
+        ArrayList<int[]> move_as_al = new ArrayList<>();
+        int startingRow, startingCol, finalRow, finalCol;
+        boolean king_in_check = false;
+
+        Setup.setBoard(board);
+        King blackKing = (King) board[0][4];
+        King whiteKing = (King) board[7][4];
+        printBoard();
+        System.out.println("Welcome to Chess, enter the first move! Type 'help' at any time for" +
+                            " additional information on gameplay.\n");
+
+        try {
+            while (play){
+
+                if ( (move = rd.readLine()) != null){
+                    move = move.trim();
+                    validMove = InputParser.check_special_input(move, wr);
+
+                    if ( !validMove ){
+                        move_as_al = InputParser.parse_input(move);
+
+                        if (move_as_al.get(0)[0] != -1){
+                            startingRow = move_as_al.get(0)[0];
+                            startingCol = move_as_al.get(0)[1];
+                            finalRow = move_as_al.get(1)[0];
+                            finalCol = move_as_al.get(1)[1];
+                            movingPiece = board[startingRow][startingCol];
+                            validMove = movingPiece.legalMove(finalRow, finalCol);
+
+                            if (validMove){
+                                if (write) wr.write(move);
+                                if (write) wr_compact.write(move);
+
+                                // Handles when an enemy piece is present in the space the current piece is moving to
+                                if (Gameplay.enemy_piece(finalRow, finalCol)){
+                                    enemyPiece = board[finalRow][finalCol];
+                                    Gameplay.kill_piece(movingPiece, enemyPiece, wr);
+                                }
+
+                                movingPiece.setRow(finalRow);
+                                movingPiece.setCol(finalCol);
+                                board[finalRow][finalCol] = movingPiece;
+                                board[startingRow][startingCol] = null;
+
+                                // Possibility for Pawn promotion
+                                if (movingPiece instanceof Pawn && (finalRow == 0 || finalRow == 7)){
+                                    Gameplay.handle_promotion(movingPiece, finalRow, finalCol);
+                                }
+
+                                if (write) wr.newLine();
+                                if (write) wr_compact.newLine();
+                                printBoard();
+
+                                // Black just moved - check if White is in check
+                                if (moveNumber % 2 == 1) king_in_check = Gameplay.handle_check(whiteKing, wr);
+                                // White just moved - check if Black is in check
+                                else king_in_check = Gameplay.handle_check(blackKing, wr);
+                            }
+                        }
+                    }
+
+                    if (validMove){
+                        if ( !(move.equals("stop") || move.equals("help")) ) moveNumber++;
+                    }
+                    else System.out.println("Illegal move, try again");
+                }
+                else {
+                    if (automate) rd = Setup.end_automation();
+                }
+            }
+
+            if (write) wr.newLine();
+            if (write) wr.write("Number of moves: " + moveNumber + "\n");
+            if (write) wr.newLine();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Handles where to read data (moves) from and where to write it to. Once this has been determined,
+     * the play() method is called to begin a game of chess.
+     * 
      * @param args Command-line input to the program
      */
     public static void main(String[] args){
 
         // TODO - add in case if there is no existing game that was paused
         boolean continuation = Setup.init();
+        if (!continuation) automate = Setup.automate_input();
         
         try {
-            FileWriter fw;
+            FileReader fr = null;
+            FileWriter fw1 = null, fw2 = null;
+            BufferedReader br = null;
+            BufferedWriter bw1 = null, bw2 = null;
+            InputStreamReader isr = null;
 
-            // Continuing with a paused game - appending to the list of moves
-            if (continuation) fw = new FileWriter("data/move-list.txt", true);
-            // Starting a new game - truncating any existing contents in the list of moves
-            else fw  = new FileWriter("data/move-list.txt", false);
+            if (automate){
+                write = false;
+                fr = new FileReader("data/move-list-compact.txt");
+                br = new BufferedReader(fr);
+                fw1 = new FileWriter("data/move-list.txt", true);
+                fw2 = new FileWriter("data/move-list-compact.txt", true);
+            }
+            else {
+                isr = new InputStreamReader(System.in);
+                br = new BufferedReader(isr);
 
-            BufferedWriter bw = new BufferedWriter(fw);
-            Piece movingPiece, enemyPiece;
-            String move;
-            ArrayList<int[]> move_as_al = new ArrayList<>();
-            int startingRow, startingCol, finalRow, finalCol;
-            boolean validMove = false;
-            boolean king_in_check = false;
-
-            Setup.setBoard(board);
-            System.out.println("NUMBER OF WHITE PIECES: " + whiteAlive.size());
-            System.out.println("NUMBER OF BLACK PIECES: " + blackAlive.size());
-            King blackKing = (King) board[0][4];
-            King whiteKing = (King) board[7][4];
-            printBoard();
-            System.out.println("Welcome to Chess, enter the first move! Type 'help' at any time for" +
-                                " additional information on gameplay.\n");
-    
-            while (play){
-    
-                move = scanner.nextLine();
-                move = move.trim();
-    
-                validMove = InputParser.check_special_input(move, bw);
-
-                if ( !validMove ){
-
-                    move_as_al = InputParser.parse_input(move);
-
-                    if (move_as_al.get(0)[0] != -1){
-                        startingRow = move_as_al.get(0)[0];
-                        startingCol = move_as_al.get(0)[1];
-                        finalRow = move_as_al.get(1)[0];
-                        finalCol = move_as_al.get(1)[1];
-                        movingPiece = board[startingRow][startingCol];
-                        validMove = movingPiece.legalMove(finalRow, finalCol);
-
-                        if (validMove){
-                            bw.write(move);
-
-                            if (enemy_piece(finalRow, finalCol)){
-                                enemyPiece = board[finalRow][finalCol];
-                                kill_piece(movingPiece, enemyPiece, bw);
-                            }
-
-                            movingPiece.setRow(finalRow);
-                            movingPiece.setCol(finalCol);
-                            board[finalRow][finalCol] = movingPiece;
-                            board[startingRow][startingCol] = null;
-
-                            // TODO - more testing (ex: if last char isn't Q, R, B, or N)
-                            if (movingPiece instanceof Pawn && (finalRow == 0 || finalRow == 7)){
-                                Pawn pawn = (Pawn) movingPiece;
-                                
-                                if (pawn.valid_promotion()){
-                                    if (move.length() == 7) movingPiece = pawn.promotion(pawn, move.charAt(6));
-                                    else movingPiece = pawn.promotion(pawn, 'Q');
-                                    board[finalRow][finalCol].removePiece();
-                                    movingPiece.addPiece();
-                                } 
-                            }
-
-                            bw.newLine();
-                            printBoard();
-
-                            // Black just moved - check if White is in check
-                            if (moveNumber % 2 == 1){
-                                if (king_in_check = whiteKing.check(blackAlive, whiteKing.getRow(), whiteKing.getCol())){
-                                    System.out.println("White King is in check!");
-                                    check_print(bw);
-                                }
-                            }
-                            // White just moved - check if Black is in check
-                            else {
-                                if (king_in_check = blackKing.check(whiteAlive, blackKing.getRow(), blackKing.getCol())){
-                                    System.out.println("Black King is in check!");
-                                    check_print(bw);
-                                }
-                            }
-                        }
-                    }
+                // Continuing with a paused game - appending to the list of moves
+                if (continuation){
+                    fw1 = new FileWriter("data/move-list.txt", true);
+                    fw2 = new FileWriter("data/move-list-compact.txt", true);
                 }
-
-                if (validMove){
-                    if ( !(move.equals("stop") || move.equals("help")) ) moveNumber++;
+                // Starting a new game - truncating any existing contents in the list of moves
+                else {
+                    fw1 = new FileWriter("data/move-list.txt", false);
+                    fw2 = new FileWriter("data/move-list-compact.txt", false);
                 }
-                else System.out.println("Illegal move, try again");
             }
 
-            bw.newLine();
-            bw.write("Number of moves: " + moveNumber);
-            bw.close();
-            fw.close();
+            bw1 = new BufferedWriter(fw1);
+            bw2 = new BufferedWriter(fw2);
+            play(br, bw1, bw2);
+
+            br.close();
+            bw1.close();
+            bw2.close();
+            fw1.close();
+            fw2.close();
+            if (fr != null) fr.close();
+            if (isr != null) isr.close();
+            scanner.close();
         }
         catch (IOException e){
             System.out.println("An error occurred\n");
