@@ -44,6 +44,7 @@ public class Queen extends Piece {
      */
     public boolean legalMove(int finalRow, int finalCol){
 
+        if ( !different_space(finalRow, finalCol) ) return false;
         int startingRow = getRow();
         int startingCol = getCol();
         Piece[][] board = getBoard();
