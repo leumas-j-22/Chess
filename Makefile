@@ -24,5 +24,5 @@ clean:
 	@$(RM) $(OUTDIR)/chess/*.class $(OUTDIR)/chess/Pieces/*.class
 
 # Remove everything from the bin directory and delete the directory itself
-clean_dir:
+clean_dirs:
 	@$(RM) -r $(OUTDIR)
