@@ -1,12 +1,14 @@
 package chess;
 
 import chess.pieces.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 /**
- * The {@code Setup} class handles the start-up process when the Chess program commences. It checks if the
- * user wants to continue with the saved game, or start a new game. It also sets up the chess board and
- * populates the ArrayLists containing the pieces in play. Finally, there is a help function that the user
- * can call at any time.
+ * The {@code Setup} class handles various administrative processes during the chess game. Some of these
+ * include providing the option to automate all the moves from the previous game, setting the chess board,
+ * populating the ArrayLists for the pieces in play, and providing a help function that the user can call
+ * at any time.
  * 
  * @author Sam Jones
  */
@@ -20,7 +22,8 @@ class Setup {
      */
     static boolean init(){
         String continuation;
-        System.out.print("Continue with the saved game or start a new game? Enter 'y' to continue, 'n' to restart: ");
+        System.out.print("Continue with the saved game or start a new game? If you restart, you will still have " +
+                "the option to automate the moves from the\nprevious game. Enter 'y' to continue, 'n' to restart: ");
 
         while (true){
             continuation = Chess.scanner.nextLine();
@@ -30,6 +33,41 @@ class Setup {
             else if (continuation.equals("n")) return false;
             else System.out.print("Invalid input. Please enter 'y' to continue where you left off, or 'n' to start a new game: ");
         }
+    }
+
+    /**
+     * Asks if the user would like to automate all the moves from the previous game.
+     * 
+     * @return {@code true} if the user would like to automate the moves, {@code false} otherwise
+     */
+    static boolean automate_input(){
+        String automate;
+        System.out.print("\nAutomate all the moves from the previous game? Enter 'y' to copy the moves, 'n' to start fresh: ");
+
+        while (true){
+            automate = Chess.scanner.nextLine();
+            automate = automate.trim();
+
+            if (automate.equals("y")) return true;
+            else if (automate.equals("n")) return false;
+            else System.out.print("Invalid input. Please enter 'y' to copy last game's moves, or 'n' to start a new game: ");
+        }
+    }
+
+    /**
+     * Called when all the moves have been automated from the previous game. This method switches where the
+     * program is reading data from to Standard Input so that the user can enter new moves.
+     * 
+     * @return A buffer to read data from Standard Input
+     */
+    static BufferedReader end_automation(){
+        if (Chess.moveNumber % 2 == 0) System.out.println("White's move:\n");
+        else System.out.println("Black's move:\n");
+        InputStreamReader isr = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(isr);
+        Chess.automate = false;
+        Chess.write = true;
+        return br;
     }
 
     /**
@@ -121,8 +159,8 @@ class Setup {
                     "From left-to-right, the columns are labeled 'a' through 'h'. From top-to-bottom the" +
                     " rows are numbered '8' through '1'.\n" +
                     "To enter a valid move, indicate the starting and ending position, separated by a" +
-                    " space, for the piece you would like to move.\nExample for a white pawn --> a2 a4\n" +
-                    "To request a draw, enter a valid move followed by 'draw?'. Ex: e7 e6 draw?\n" +
+                    " space, for the piece you would like to move.\nExample for a white pawn --> 'a2 a4'\n" +
+                    "To request a draw, enter a valid move followed by 'draw?'. Ex: 'e7 e6 draw?'\n" +
                     "To resign from the game, enter 'resign'.\n" +
                     "Have fun!\n\n" +
                     "Enter 'q' to exit the help menu: ");
