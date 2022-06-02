@@ -6,8 +6,14 @@ import java.io.IOException;
 
 /**
  * This class parses input from the user. Input is broken up into two categories - regular input and special
- * input. Regular input is any 5-character, regular move, such as "e2 e4". Special input involves the
- * keywords "stop", "help", "resign", and "draw?". Appropriate action and returns are made for all cases.
+ * input. Regular input is any 5-character, regular move, such as "e2 e4" (see Pawn promotion exception).
+ * Special input involves the keywords "stop", "help", "resign", and "draw?".
+ * <p>
+ * One special input that is grouped with regular input is Pawn promotion. For example, "a7 a8 Q". This is
+ * grouped with regular input because the user does not have to enter the 'Q' and can instead just enter
+ * "a7 a8".
+ * <p>
+ * Appropriate action and returns are made for all cases.
  * 
  * @author Sam Jones
  */
@@ -53,8 +59,14 @@ class InputParser {
     }
 
 
-    // TODO - more testing with this
-    static boolean good_promotion(String move){
+    // TODO - more testing with this (things like potential errors)
+    /**
+     * Determines if the input entered by the user matches the correct form for Pawn promotion input.
+     * 
+     * @param move The move the user enters
+     * @return {@code true} if it is good pawn promotion input, {@code false} otherwise
+     */
+    static boolean good_promotion_input(String move){
         if (move.length() == 7 && has_two_spaces(move) != -1){
             if (move.charAt(6) == 'Q') return true;
             if (move.charAt(6) == 'R') return true;
@@ -84,7 +96,7 @@ class InputParser {
         int startingRow, startingCol, finalRow, finalCol;
 
         // Example of a valid move: a2 a4
-        if (move.length() == 5 || good_promotion(move)){
+        if (move.length() == 5 || good_promotion_input(move)){
             startingRow = move.charAt(1);
             startingCol = move.charAt(0);
             finalRow = move.charAt(4);
@@ -172,19 +184,19 @@ class InputParser {
      */
     private static void resign(BufferedWriter bw){
         try{
-            bw.write("resign");
-            bw.newLine();
+            if (Chess.write) bw.write("resign");
+            if (Chess.write) bw.newLine();
 
             if (Chess.moveNumber % 2 == 0){
                 System.out.println("Black wins");
-                bw.write("Black wins");
+                if (Chess.write) bw.write("Black wins");
             }
             else {
                 System.out.println("White wins");
-                bw.write("White wins");
+                if (Chess.write) bw.write("White wins");
             }
 
-            bw.newLine();
+            if (Chess.write) bw.newLine();
             Chess.play = false;
         }
         catch (IOException e){
@@ -202,10 +214,10 @@ class InputParser {
     private static void draw(String move, BufferedWriter bw){
         try {
             System.out.println("draw");
-            bw.write(move);
-            bw.newLine();
-            bw.write("draw");
-            bw.newLine();
+            if (Chess.write) bw.write(move);
+            if (Chess.write) bw.newLine();
+            if (Chess.write) bw.write("draw");
+            if (Chess.write) bw.newLine();
             Chess.play = false;
         }
         catch (IOException e){
@@ -220,8 +232,8 @@ class InputParser {
      */
     private static void stop(BufferedWriter bw){
         try {
-            bw.write("stop");
-            bw.newLine();
+            if (Chess.write) bw.write("stop");
+            if (Chess.write) bw.newLine();
             Chess.play = false;
         }
         catch (IOException e){
