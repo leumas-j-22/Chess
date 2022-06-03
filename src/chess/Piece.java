@@ -139,6 +139,21 @@ public abstract class Piece {
     }
 
     /**
+     * Determines if the space a user would like to move a piece to is different from the space the piece
+     * is currently on.
+     * 
+     * @param finalRow The row the piece wants to move to
+     * @param finalCol The column the piece wants to move to
+     * @return {@code true} if the piece is moving to a different space, {@code false} otherwise
+     */
+    public boolean different_space(int finalRow, int finalCol){
+        int rowChange = finalRow - row;
+        int colChange = finalCol - col;
+        if (rowChange == 0 && colChange == 0) return false;
+        return true;
+    }
+
+    /**
      * Adds the current piece to the chess board. If the piece is on the White team, it adds it to the
      * ArrayList of White pieces in play. If the piece is on the Black team, it adds it to the ArrayList
      * of Black pieces in play.
@@ -155,7 +170,7 @@ public abstract class Piece {
      * The dynamic type of bRook1 is {@code Rook}, so calling {@code addPiece()} above will add
      * the Rook to the board.
      */
-    public void addPiece(){
+    void addPiece(){
         board[row][col] = this;
         if (team == 'w') Chess.whiteAlive.add(this);
         else Chess.blackAlive.add(this);
